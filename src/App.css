@@ -1,0 +1,117 @@
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(90deg, white 0%, #849E83 100%);
+  --hamburger-size: 30px;
+}
+.App {
+  display: flex;
+  flex-direction: row;
+  height:100%;
+}
+
+.Sidebar {
+  width: 15%;
+  height: 100%;
+  background: white;
+  display: flex;                 /* enable flexbox */
+  flex-direction: column;        /* stack buttons vertically */
+  justify-content: start;       /* center vertically */
+  align-items: start;           /* center horizontally */
+  border: 1px solid black;
+  padding: 10px left;
+  color: black;
+}
+
+.Sidebarlist{
+  height:auto;
+  padding:0;
+  width:100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 10%;
+}
+
+.Sidebar .row {
+  width: 100%;
+  height: 100px;
+  display:flex;
+  flex-direction: row;
+}
+.row:hover{
+  border: 1px solid black;
+}
+.row #icon {
+  width: 40%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding-left: 15px;
+}
+
+.row #title{
+  width: 60%;
+  height:100%;
+  display: flex;
+  align-items: center;
+}
+
+
+.Hamburger {
+  display: none; /* hidden on desktop */
+  flex-direction: column;
+  justify-content: space-between;
+  width: var(--hamburger-size);
+  height: calc(var(--hamburger-size) * 0.7);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* Each bar (line) */
+.Hamburger .bar {
+  width: 100%;
+  height: calc(var(--hamburger-size) * 0.12);
+  background-color: black; /* solid black */
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+@media (max-width:1650px) {
+  .App{
+    color: black;
+  }
+  .Sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 60%;
+    height: 100%;
+    background: white;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 5;
+  }
+
+  .Sidebar.open {
+    transform: translateX(0);
+  }
+
+  .Hamburger {
+    display: flex;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 10;
+  }
+  .content {
+    padding-top: 100px;  /* gives vertical gap */
+    padding-left: 100px; /* gives horizontal gap to the right of the hamburger */
+    flex:1;
+  }
+}
