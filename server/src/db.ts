@@ -205,4 +205,78 @@ export function removeEvent(eventId: number): void {
   }
 }
 
+db.exec(`
+  CREATE TABLE cards (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    player_id INTEGER NOT NULL,
+    oracle_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    mana_cost TEXT,
+    cmc REAL,
+    type_line TEXT,
+    oracle_text TEXT,
+    power TEXT,
+    toughness TEXT,
+
+    image_small TEXT,
+    image_normal TEXT,
+    image_large TEXT,
+
+    FOREIGN KEY (player_id) REFERENCES players(id)
+);
+  `)
+export const insertCardStmt = db.prepare(`
+  INSERT INTO cards (
+    player_id,
+    oracle_id,
+    name,
+    mana_cost,
+    cmc,
+    type_line,
+    oracle_text,
+    power,
+    toughness,
+    image_small,
+    image_normal,
+    image_large
+  )
+  VALUES (
+    @player_id,
+    @oracle_id,
+    @name,
+    @mana_cost,
+    @cmc,
+    @type_line,
+    @oracle_text,
+    @power,
+    @toughness,
+    @image_small,
+    @image_normal,
+    @image_large
+  );
+`);
+
+export function addCard(playerId: number, cardData: any) {
+  if (!cardData) throw new Error("No card data provided");
+
+  const card = {
+    player_id: playerId,
+    oracle_id: cardData.oracle_id,
+    name: cardData.name,
+    mana_cost: cardData.mana_cost || null,
+    cmc: cardData.cmc || null,
+    type_line: cardData.type_line || null,
+    oracle_text: cardData.oracle_text || null,
+    power: cardData.power || null,
+    toughness: cardData.toughness || null,
+
+    image_small: cardData.image_uris?.small || null,
+    image_normal: cardData.image_uris?.normal || null,
+    image_large: cardData.image_uris?.large || null
+  };
+
+  const info = insertCardStmt.run(card);
+  return { success: true, card_id: info.lastInsertRowid };
+}
 export default db;
