@@ -204,7 +204,7 @@ export function removeEvent(eventId: number): void {
     console.log(`🗑️ Event ${eventId} successfully removed.`);
   }
 }
-
+//card database 
 db.exec(`
   CREATE TABLE cards (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -218,6 +218,8 @@ db.exec(`
     oracle_text TEXT,
     power TEXT,
     toughness TEXT,
+    upd_power TEXT,
+    upd_toughness TEXT,
 
     image_small TEXT,
     image_normal TEXT,
@@ -226,6 +228,8 @@ db.exec(`
     FOREIGN KEY (player_id) REFERENCES players(id)
 );
   `)
+
+//Add card 
 export const insertCardStmt = db.prepare(`
   INSERT INTO cards (
     player_id,
@@ -237,6 +241,8 @@ export const insertCardStmt = db.prepare(`
     oracle_text,
     power,
     toughness,
+    upd_power,
+    upd_toughness,
     image_small,
     image_normal,
     image_large
@@ -270,7 +276,8 @@ export function addCard(playerId: number, cardData: any) {
     oracle_text: cardData.oracle_text || null,
     power: cardData.power || null,
     toughness: cardData.toughness || null,
-
+    upd_power: cardData.power || null,
+    upd_toughness: cardData.toughness || null,
     image_small: cardData.image_uris?.small || null,
     image_normal: cardData.image_uris?.normal || null,
     image_large: cardData.image_uris?.large || null
@@ -278,5 +285,90 @@ export function addCard(playerId: number, cardData: any) {
 
   const info = insertCardStmt.run(card);
   return { success: true, card_id: info.lastInsertRowid };
+}
+
+//Card retrieval by PlayerId
+export const getCardsByPlayerStmt = db.prepare(`
+  SELECT
+    id,
+    oracle_id,
+    name,
+    mana_cost,
+    cmc,
+    type_line,
+    oracle_text,
+    power,
+    toughness,
+    image_small,
+    image_normal,
+    image_large
+  FROM cards
+  WHERE player_id = ?
+`);
+
+export function getCardsByPlayer(playerId: number) {
+  return getCardsByPlayerStmt.all(playerId);
+}
+
+//Card deletion 
+export const deleteCardStmt = db.prepare(`
+  DELETE FROM cards WHERE id = ? AND player_id = ?
+`);
+
+export function removeCard(cardId: number) {
+  const result = deleteCardStmt.run(cardId);
+
+  return {
+    success: result.changes > 0,
+    deleted: result.changes
+  };
+}
+
+export const updateCardOwnerStmt = db.prepare(`
+  UPDATE cards
+  SET player_id = @newPlayerId
+  WHERE id = @cardId
+`);
+
+export function updateCardOwner(cardId: number, newPlayerId: number) {
+  const result = updateCardOwnerStmt.run({
+    cardId,
+    newPlayerId
+  });
+
+  return {
+    success: result.changes > 0,
+    updated: result.changes
+  };
+}
+
+export const updatePowerStmt = db.prepare(`
+  UPDATE cards
+  SET upd_power = @upd_power
+  WHERE id = @cardId
+`);
+
+export const updateToughnessStmt = db.prepare(`
+  UPDATE cards
+  SET upd_toughness = @upd_toughness
+  WHERE id = @cardId
+`);
+
+export function updateCardPower(cardId: number, upd_power: string) {
+  const result = updatePowerStmt.run({
+    cardId,
+    upd_power
+  });
+
+  return { success: result.changes > 0 };
+}
+
+export function updateCardToughness(cardId: number, upd_toughness: string) {
+  const result = updateToughnessStmt.run({
+    cardId,
+    upd_toughness
+  });
+
+  return { success: result.changes > 0 };
 }
 export default db;

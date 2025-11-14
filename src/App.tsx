@@ -5,6 +5,7 @@ import Homepage from './pages/Homepage';
 import Lifepage from './pages/Lifepage';
 import Statspage from './pages/Statspage';
 import MobileSidebar from './components/mobileSidebar';
+import Cardspage from './pages/Cardspage';
 
 function App() {
   const [currentPage, setCurrentPage] = useState("Home");
@@ -63,6 +64,7 @@ function App() {
         {currentPage === "Home" && <Homepage />}
         {currentPage === "Life" && <Lifepage />}
         {currentPage === "Stats" && <Statspage />}
+        {currentPage === "Cards" && <Cardspage/>}
       </div>
     </div>
   );

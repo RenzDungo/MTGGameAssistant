@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import{ useState,} from "react";
 import "../styles/Home.css"
 import { useLobby } from "../Lobbycontext";
 import { usePlayer } from "../Playercontext";
